@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*方法MediaDevices.enumerateDevices() 用于收集系统上可用的多媒体输入和输出设备的信息*/
+
+        function gotDevices(deviceInfos){
+            console.log(deviceInfos)
+            for(var i = 0; i !== deviceInfos.length; ++i){
+                var deviceInfo = deviceInfos[i];
+                if(deviceInfo.kind === 'audioinput'){
+
+                }else if(deviceInfo.kind === 'audiooutput'){
+
+                }else if(devideInfo.kind === 'videoinput'){
+
+                }else{
+                    console.log('Some other kind of source/device: ', deviceInfo)
+                }
+            }
+        }
+
+        function handleError(){
+
+        }
+
+        navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);
+        /*
+            MediaSourceTrack 请求设备列表并从中选择我们需要的设备 以下方法已废弃
+        */
+
+        // MediaStreamTrack.getSources(function(sources){
+        //     var audioSource = null;
+        //     var videoSource = null;
+
+        //     for(var i = 0; i < sources.length; i++){
+        //         var source = sources[i];
+        //         if(source.kind === 'audio'){
+        //             console.log('发现麦克风：', source.label, source.id);
+        //             audioSource = source.id;
+        //         }else if (source.kind === 'video'){
+        //             console.log('发现摄像头：', source.label, source.id);
+        //             videoSource = source.id;
+        //         }else{
+        //             console.log('发现未知资源：', source)
+        //         }
+        //     }
+
+        //     var constraints = {
+        //         audio: {
+        //             optional: [
+        //                 {
+        //                     sourceId: audioSource
+        //                 }
+        //             ]
+        //         },
+        //         video: {
+        //             optional: [
+        //                 {
+        //                     sourceId: videoSource
+        //                 }
+        //             ]
+        //         }
+        //     };
+
+        //     navigator.getUserMedia(constraints, function(stream){
+        //         var video = document.querySelector('video');
+        //         video.src = window.URL.createObjectURL(stream);
+        //     }, function(error){
+        //         console.log('Raised an error when capturing:', error)
+        //     })
+        // })
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        navigator.getUserMedia({
+            video: {
+                mandatory: {
+                    minAspectRatio: 1.777, //强制改变长宽比
+                    maxAspectRatio: 1.778
+                },
+                optional: {
+                    maxWidth: 640,
+                    maxHeight: 480
+                }
+            },
+            audio: false
+        }, function(stream){
+            var video = document.querySelector('video');
+            video.src = window.URL.createObjectURL(stream);
+        }, function(error){
+            console.log('Raised an error when capturing:', error);
+        })
+    </script>
+</body>
+</html>
