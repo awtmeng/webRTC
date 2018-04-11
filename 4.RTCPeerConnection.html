@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Learning WebRTC - Chapter 4: Creating a RTCPeerConnection</title>
+    <style>
+        body{
+            background-color: #3d6df2;
+            margin-top: 15px;
+        }
+
+        video {
+            background: black;
+            border: 1px solid gray;
+        }
+
+        #container {
+            position: relative;
+            display: block;
+            margin: 0 auto;
+            width: 500px;
+            height: 500px;
+        }
+
+        #yours {
+            width: 150px;
+            height: 150px;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        #theirs {
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <video id="yours" autoplay></video>
+        <video id="theirs" autoplay></video>
+    </div>
+    <script>
+        function hasUserMedia(){
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia  || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+            return !!navigator.getUserMedia;
+        }
+
+        function hasRTCPeerConnection(){
+            window.RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+            return !!window.RTCPeerConnection;
+        }
+
+        var yourVideo = document.querySelector('#yours');
+        var theirVideo = document.querySelector('#theirs');
+        var yourConnection, theirConnection;
+
+        function startPeerConnection(){
+            var configuration = {
+                'iceServers': [{'url': 'stun:127.0.0.1:9876'}]
+            }
+
+            yourConnection = new webkitRTCPeerConnection(configuration);
+            theirConnection = new webkitRTCPeerConnection(configuration);
+
+            //创建ICE处理
+            yourConnection.onicecandidate = function(event){
+                if(event.candidate){
+                    theirConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
+                }
+            }
+
+            theirConnection.onicecandidate = function(event){
+                if(event.candidate){
+                    yourConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
+                }
+            }
+
+            //开始 offer
+            yourConnection.createOffer(function(offer){
+                yourConnection.setLocalDescription(offer);
+                theirConnection.setRemoteDescription(offer);
+                theirConnection.createAnswer(
+                    function(offer){
+                        theirConnection.setLocalDescription(offer);
+                        yourConnection.setRemoteDescription(offer);
+                    }
+                )
+            });
+        }
+
+        if(hasUserMedia()){
+            navigator.getUserMedia({
+                video: true,
+                audio: false
+            }, function(stream){
+                yourVideo.srcObject = stream;
+                if(hasRTCPeerConnection()){
+                    startPeerConnection(stream)
+                }else{
+                    console.log('not support')
+                }
+            }, function(error){
+                console.log('try again')
+            })
+        }else{
+            console.log('not support')
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Learning WebRTC - Chapter 2: Get User Media</title>
+    <style>
+        video, canvas{
+            border: 1px solid gray;
+            width: 480px;
+            height: 320px;
+        }
+    </style>
+</head>
+<body>
+    <video autoplay></video>
+    <canvas></canvas>
+    <button id="capture">click me</button>
+    <script>
+        function hasUserMedia(){
+            return !!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGotUserMedia || navigator.msGetUserMedia);
+        }
+
+        if(hasUserMedia()){
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGotUserMedia || navigator.msGetUserMedia;
+            var video = document.querySelector('video');
+            var canvas = document.querySelector('canvas');
+            var streaming = false;
+
+            navigator.getUserMedia({
+                video: true,
+                audio: false
+            }, function(stream){
+                // 以下方法已废弃
+                //video.src = window.URL.createObjectURL(stream); 
+                video.srcObject = stream;
+                streaming = true;
+            }, function(error){
+                console.log('Raised an error when capturing:', error)
+            })
+
+            document.querySelector('#capture').addEventListener('click', function(event){
+                if(streaming){
+                    canvas.width = video.clientWidth;
+                    canvas.height = video.clientHeight;
+                    var context = canvas.getContext('2d');
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                }else{
+                    console.log('no support getUserMedia');
+                }
+            })
+        }
+    </script>
+</body>
+</html>

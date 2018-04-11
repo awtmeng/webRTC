@@ -7,25 +7,48 @@
     <title>Document</title>
 </head>
 <body>
+    <video autoplay></video>
     <script>
-        navigator.getUserMedia({
-            video: {
-                mandatory: {
-                    minAspectRatio: 1.777, //强制改变长宽比
-                    maxAspectRatio: 1.778
+
+        function hasUserMedia(){
+            return !!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGotUserMedia || navigator.msGetUserMedia);
+        }
+
+        if(hasUserMedia()){
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGotUserMedia || navigator.msGetUserMedia;
+
+            navigator.getUserMedia({
+                video: {
+                    // 以下方法已废弃
+                    // mandatory: {
+                    //     minAspectRatio: 1.777, //强制改变长宽比
+                    //     maxAspectRatio: 1.778
+                    // },
+                    // optional: {
+                    //     maxWidth: 640,
+                    //     maxHeight: 480
+                    // },
+                    width: {
+                        min: 1024,
+                        ideal: 1280,
+                        max: 1920
+                    },
+                    height: {
+                        min: 576, 
+                        ideal: 720,
+                        max: 1080
+                    }
                 },
-                optional: {
-                    maxWidth: 640,
-                    maxHeight: 480
-                }
-            },
-            audio: false
-        }, function(stream){
-            var video = document.querySelector('video');
-            video.src = window.URL.createObjectURL(stream);
-        }, function(error){
-            console.log('Raised an error when capturing:', error);
-        })
+                audio: false
+            }, function(stream){
+                var video = document.querySelector('video');
+                // 以下方法已废弃
+                //video.src = window.URL.createObjectURL(stream); 
+                video.srcObject = stream;
+            }, function(error){
+                console.log('Raised an error when capturing:', error);
+            })
+        }
     </script>
 </body>
 </html>
